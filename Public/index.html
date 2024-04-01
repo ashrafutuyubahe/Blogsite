@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogsite</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            width: 100%;
+            background-color: #efeff2;
+            color: rgb(162, 162, 183);
+            min-height: 100vh;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            display: inline;
+            margin-right: 1rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit; /* Inherit color from body */
+        }
+
+        nav {
+            background-color: rgb(23, 17, 36);
+            padding: 0.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            
+        }
+
+        .logo img {
+            width: 100px;
+            height: auto;
+        }
+
+        main {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        section {
+            margin-bottom: 2rem; /* Add spacing between sections */
+        }
+
+        footer {
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        .show img {
+            width: 90%; /* Set image width to 100% of its container */
+            height: 50rem; /* Maintain aspect ratio */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <header>
+            <div class="navbar">
+                <nav>
+                    <div class="logo">
+                        <img src="./bookimga.jpg" alt="Logo" id="bgimg" />
+                        <!-- Replace with your logo image -->
+                    </div>
+                    <ul>
+                        <li><a href="./createblog.html">Create Blog</a></li>
+                        <li><a href="./login.html">Log in</a></li>
+                        <!-- Missing closing anchor tag -->
+                        <li><a href="./register.html">Register</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        <main>
+            <section class="show" style="margin: 0;">
+                <img src="./bookimga.jpg" alt="hey" />
+            </section>
+            <section>
+                <!-- <h1>Write Your Story, Connect Your World</h1> -->
+                <!-- <p>Share your experiences, connect with others, and build your online presence through blogging.</p> -->
+            </section>
+            <section>
+                <!-- <h2>Let people know what you do</h2>
+                <p>Whether you're a student, a professional, or an enthusiast, share your passion with the world.</p> -->
+            </section>
+        </main>
+        <footer>
+            <!-- <p>&copy; 2024 Blogsite. All rights reserved.</p> -->
+        </footer>
+    </div>
+</body>
+</html>
