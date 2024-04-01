@@ -1,5 +1,10 @@
 const { error } = require('console');
+const { string } = require('joi');
 const   mongoose = require('mongoose');
+const { type } = require('os');
 const userSchema=   mongoose.connect('mongodb://localhost/Blogsite')
 .then(console.log('the connection  to mongodb is set... '))
-.catch(console.log('error while stting connection to mongdb'));
+.catch((error)=>{
+    console.error('error while stting connection to mongdb')
+});
+
