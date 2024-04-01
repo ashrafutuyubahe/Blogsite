@@ -2,12 +2,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const Blog = require("./blogschema");
-// const jsdom = require("jsdom");
-// const dom = new jsdom.JSDOM("");
-// const $ = require("jquery")(dom.window);
 
-// const http = require("http");
-// const server = http.createServer((req, res) => {});
 
 const app = express();
 const PORT = process.env.PORT ||3000;
