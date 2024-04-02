@@ -3,6 +3,7 @@ const dbconn = require("./DBconfig/Dbconnection");
 const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
 const ejs= require('ejs');
+const Joi= require('joi');
 
 const path = require("path");
 const fs = require("fs");
@@ -30,20 +31,34 @@ app.get("/register", (req, res) => {
 
 app.post("/register", async (req, res) => {
   try {
-      const { username, useremail, userpassword } = req.body;
-      const newUser = new usermodel({
-          username: username,
-          useremail: useremail,
-          userpassword: userpassword
-      });
-      const savedUser = await newUser.save();
-      console.log("User saved successfully:", savedUser);
-      res.redirect("/");
+    let uservalidationschema = Joi.object({
+      username: Joi.string().min(3).required(),
+      useremail: Joi.string().email().required(),
+      userpassword: Joi.string().required()
+    });
+
+    const result = uservalidationschema.validate(req.body);
+
+    if (result.error) {
+      return res.status(400).send(result.error.details[0].message);
+    }
+
+    const { username, useremail, userpassword } = req.body;
+    const newUser = new usermodel({
+      username: username,
+      useremail: useremail,
+      userpassword: userpassword
+    });
+
+    const savedUser = await newUser.save();
+    console.log("User saved successfully:", savedUser);
+    res.send("Registration successful");
   } catch (error) {
-      console.error("Error during registration:", error.message);
-      res.status(500).send("Internal Server Error");
+    console.error("Error during registration:", error.message);
+    res.status(500).send("Internal Server Error");
   }
 });
+
 
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

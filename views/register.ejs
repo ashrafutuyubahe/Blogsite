@@ -73,7 +73,7 @@ h5 a{
 <body>
     <div class="container">
         <h2>Create an Account</h2>
-        <form action="/register" method="post">
+        <form action="/register" method="post" id="registrationForm">
             <div>
           <label for="email">Email:</label>
                 <input type="email" id="email" name="useremail" >
@@ -90,7 +90,27 @@ h5 a{
             <h5>already have  an account.<a  href="./login.html">Log in</a></h5>
         </form>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#registrationForm').submit(function(event) {
+          event.preventDefault();
     
+          $.ajax({
+            type: 'POST',
+            url: '/register',
+            data: $(this).serialize(), 
+            success: function(response) {
+              window.location.href = "/"; 
+            },
+            error: function(xhr, status, error) {
+              alert(xhr.responseText); 
+            }
+          });
+        });
+      });
+    </script>
+     
 </body>
 
 </html>
