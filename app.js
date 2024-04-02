@@ -2,9 +2,9 @@ const express = require("express");
 const dbconn = require("./DBconfig/Dbconnection");
 const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
-const ejs= require('ejs');
-const Joi= require('joi');
-
+const ejs = require("ejs");
+const Joi = require("joi");
+const mongoose = require("mongoose");
 const path = require("path");
 const fs = require("fs");
 const { prototype } = require("events");
@@ -18,8 +18,8 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
@@ -34,7 +34,7 @@ app.post("/register", async (req, res) => {
     let uservalidationschema = Joi.object({
       username: Joi.string().min(3).required(),
       useremail: Joi.string().email().required(),
-      userpassword: Joi.string().required()
+      userpassword: Joi.string().required(),
     });
 
     const result = uservalidationschema.validate(req.body);
@@ -47,7 +47,7 @@ app.post("/register", async (req, res) => {
     const newUser = new usermodel({
       username: username,
       useremail: useremail,
-      userpassword: userpassword
+      userpassword: userpassword,
     });
 
     const savedUser = await newUser.save();
@@ -59,6 +59,34 @@ app.post("/register", async (req, res) => {
   }
 });
 
+app.get("/login", (req, res) => {
+  res.render("login");
+});
 
+app.post('/login', async (req, res) => {
+  try {
+    const { useremail, userpassword } = req.body;
+
+    
+    const user = await usermodel.findOne({ useremail });
+
+    if (!user) {
+  
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    
+    if (user.userpassword !== userpassword) {
+    
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+   
+    res.status(200).json({ message: "Login successful", user });
+  } catch (error) {
+    console.error("Error during login:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
