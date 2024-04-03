@@ -4,11 +4,8 @@ const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const Joi = require("joi");
-const BlogModel= require('./models/blogschema');
+const BlogModel = require("./models/blogschema");
 const path = require("path");
-const fs = require("fs");
-const { prototype } = require("events");
-
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -70,13 +67,11 @@ app.post("/login", async (req, res) => {
 
     const user = await usermodel.findOne({ useremail });
 
-   
-    if (  !user || user.userpassword !== userpassword) {
+    if (!user || user.userpassword !== userpassword) {
       return res.send("Invalid email or password");
     }
 
     res.send("Login successful");
-    
   } catch (error) {
     res.send("Error during login:", error.message);
 
@@ -84,19 +79,36 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get('/createblog',(req,res)=>{
-  res.render('createblog');
-}) 
-app.post('/createblog',async(req,res)=>{
-  const {authorname,blogtitle,blogdes,blogcontent} =req.body;
+app.get("/createblog", (req, res) => {
+  res.render("createblog");
+});
+app.post("/createblog", async (req, res) => {
+
+  const blogvalidateschema= joi.object({
+    authorname:Joi.string().min(5).required(),
+    blogtitle:Joi.string().min(5).required(),
+    blogdescription:Joi.string().min(5).required(),
+    blogcontent:Joi.string().min(5).required(),
+    image:Joi.string().min(5).required(),
+
+  })
+  const { authorname, blogtitle, blogdes, blogcontent, image } = req.body;
   
-})
+  const storeblog = new BlogModel({
+    authorname,
+    blogtitle,
+    blogdescription: blogdes,
+    blogcontent,
+    image,
+  });
 
 
-
-
-
-
-
+  try {
+    const saveblog = await storeblog.save();
+    res.send("blog published successfully");
+  } catch (error) {
+    res.status(401).send("error in publication ", error.message);
+  }
+});
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
