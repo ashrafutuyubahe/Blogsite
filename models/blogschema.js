@@ -26,6 +26,10 @@ const blogSchema = new mongoose.Schema({
       required: true,
       minlength: 50,
     },
+    image: {
+      type: String, 
+      required: true
+    },
     date: {
       type: Date,
       default: Date.now,
@@ -33,7 +37,9 @@ const blogSchema = new mongoose.Schema({
   },
   authordetails: {
     location: { type:String, minlength:5, required: true },
-    github: { type: String, trim: true }
+    github: { type: String, trim: true },
+    academic:{type:String,required:true}
+
   }
 });
 

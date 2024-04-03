@@ -76,7 +76,7 @@ app.post("/login", async (req, res) => {
     }
 
     res.send("Login successful");
-    //  return res.render('/');
+    
   } catch (error) {
     res.send("Error during login:", error.message);
 
