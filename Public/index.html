@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blogsite</title>
-     <link rel="stylesheet" href="./indexcss.css">
-    </head>
+    <link rel="stylesheet" href="./indexcss.css" />
+  </head>
   <body>
     <div>
       <header>
@@ -15,8 +15,8 @@
               <img src="./ashrafulogosvg.svg" alt="Logo" id="bgimg" />
             </div>
             <ul>
-              <li><a href="./createblog.html">Create Blog</a></li>
-              <li><a href="./login" id="login" >Log in</a></li>
+              <li><a href="./createblog" id="create">Create Blog</a></li>
+              <li><a href="./login" id="login">Log in</a></li>
 
               <li><a href="./register" id="register">Register</a></li>
             </ul>
@@ -130,8 +130,18 @@
           window.location.href = href;
         });
       }
-      directLogin();
+      function directCreateblog() {
+        const userclickedlink = document.getElementById("create");
+        userclickedlink.addEventListener("click", (event) => {
+          event.preventDefault();
 
+          const href = userclickedlink.getAttribute("href");
+
+          window.location.href = href;
+        });
+      }
+      directCreateblog();
+      directLogin();
       diretoregister();
     </script>
   </body>

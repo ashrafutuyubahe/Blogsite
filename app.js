@@ -4,7 +4,7 @@ const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const Joi = require("joi");
-
+const BlogModel= require('./models/blogschema');
 const path = require("path");
 const fs = require("fs");
 const { prototype } = require("events");
@@ -83,5 +83,20 @@ app.post("/login", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+app.get('/createblog',(req,res)=>{
+  res.render('createblog');
+}) 
+app.post('/createblog',async(req,res)=>{
+  const {authorname,blogtitle,blogdes,blogcontent} =req.body;
+  
+})
+
+
+
+
+
+
+
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
