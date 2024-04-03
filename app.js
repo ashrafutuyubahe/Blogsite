@@ -4,7 +4,7 @@ const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const Joi = require("joi");
-const mongoose = require("mongoose");
+
 const path = require("path");
 const fs = require("fs");
 const { prototype } = require("events");
@@ -63,29 +63,24 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
-app.post('/login', async (req, res) => {
+app.post("/login", async (req, res) => {
   try {
-    const { useremail, userpassword } = req.body;
+    const { useremail } = req.body;
+    const { userpassword } = req.body;
 
-    
     const user = await usermodel.findOne({ useremail });
 
-    if (!user) {
-  
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
-
-    
-    if (user.userpassword !== userpassword) {
-    
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
-
    
-    res.status(200).json({ message: "Login successful", user });
+    if (  !user || user.userpassword !== userpassword) {
+      return res.send("Invalid email or password");
+    }
+
+    res.send("Login successful");
+    //  return res.render('/');
   } catch (error) {
-    console.error("Error during login:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.send("Error during login:", error.message);
+
+    res.status(500).send("Internal Server Error");
   }
 });
 
