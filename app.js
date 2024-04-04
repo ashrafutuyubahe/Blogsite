@@ -103,7 +103,6 @@ app.post("/createblog", async (req, res) => {
 
     const validateblog = blogvalidateschema.validate(req.body);
     if (validateblog.error) {
-     
       return res.status(400).send(validateblog.error.details[0].message);
     }
 
@@ -113,8 +112,7 @@ app.post("/createblog", async (req, res) => {
       authorname,
       blogtitle,
       blogdescription: blogdes,
-      blogcontent
-    
+      blogcontent,
     });
     try {
       console.log(req.body);
@@ -156,6 +154,24 @@ app.post("/authordesc", async (req, res) => {
   } catch (error) {
     console.error("Error adding author details:", error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+//fetching blogs from mongodb
+
+app.get("/blogs", async (req, res) => {
+  try {
+    const fetchData = await models.BlogModel.find({})
+    .limit(2)
+  .select('authorname')
+    .exec();
+    
+    
+    return res.send(fetchData);
+   
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: "Failed to load data" });
   }
 });
 

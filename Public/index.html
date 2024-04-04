@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blogsite</title>
     <link rel="stylesheet" href="./indexcss.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <div>
@@ -97,12 +98,12 @@
           </div>
         </section>
         <section class="section2">
-          <p>
+          <!-- <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus
             hic at explicabo nesciunt praesentium ratione corporis reiciendis
             fugiat, aliquid voluptates nisi, dolor debitis aperiam facilis
             distinctio alias aspernatur quam?
-          </p>
+          </p> -->
         </section>
       </main>
       <footer>
@@ -143,6 +144,25 @@
       directCreateblog();
       directLogin();
       diretoregister();
+
+      $(document).ready(function () {
+        function getData() {
+
+      $.ajax({
+        type:'get',
+        url:'/blogs',
+        
+        success:function(responseText){
+        alert('hello');
+        },
+        error: function(error){
+          console.error('Error:', error);
+        }
+      })
+        }
+
+      getData();
+      });
     </script>
   </body>
 </html>
