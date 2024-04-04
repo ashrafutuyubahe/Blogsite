@@ -10,17 +10,17 @@
 <body>
   <div class="container">
     <div class="blog">
-      <form id="blog-form" action="/createblog" method="post" enctype="multipart/form-data">
+      <form id="blog-form" action="/createblog" method="post">
         <h1>Create Your Blog Post</h1>
         <label for="name">Author</label>
-        <input type="text" id="name" name="authorname" required />
+        <input type="text" id="aname" name="authorname" required />
         <label for="title">Title</label>
         <input type="text" id="title" name="blogtitle" required />
         <label for="description">Blog Description</label>
         <input type="text" id="description" name="blogdes" required />
         <label for="content">Content</label>
         <textarea name="blogcontent" id="content" cols="30" rows="10" required></textarea>
-        <input type="file" id="imageInput" name="image" accept="image/jpeg, image/png, image/gif, image/bmp, image/tiff, image/webp, image/svg+xml, image/x-icon, image/vnd.adobe.photoshop, image/raw" required />
+        <!-- <input type="file" id="imageInput" name="image" accept="image/jpeg, image/png, image/gif, image/bmp, image/tiff, image/webp, image/svg+xml, image/x-icon, image/vnd.adobe.photoshop, image/raw" required /> -->
         <input type="submit" value="Publish Blog" />
       </form>
     </div>
@@ -39,14 +39,14 @@
       <h3>Let People Know Who You Are and What You Do</h3>
       <form id="authordesc" action="/authordesc" method="post">
         <label for="location">Location</label>
-        <input type="text" id="location" placeholder="Simply the city" required />
+        <input type="text" id="location" placeholder="Simply the city" required name="location" />
         <label for="github">Link to GitHub (optional)</label>
         <input type="text" id="github" name="github" />
         <label for="academic">Your Educational Background</label>
         <select name="academic" id="academic" required>
-          <option value="highschool">High School Student</option>
-          <option value="olevel">Ordinary Level Student</option>
-          <option value="university">Student at University</option>
+          <option >High School Student</option>
+          <option >Ordinary Level Student</option>
+          <option >Student at University</option>
           <option value="others">Others</option>
         </select>
         <h5>Please add the above data to your blog post</h5>
@@ -57,34 +57,33 @@
   <script>
     $(document).ready(function () {
      
-      function isValidImage(file) {
-        if (!file) {
-          return false; 
-        }
-        const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml', 'image/x-icon', 'image/vnd.adobe.photoshop', 'image/raw'];
-        if (!validImageTypes.includes(file.type)) {
-          return false; 
-        }
+      // function isValidImage(file) {
+      //   if (!file) {
+      //     return false; 
+      //   }
+      //   const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml', 'image/x-icon', 'image/vnd.adobe.photoshop', 'image/raw'];
+      //   if (!validImageTypes.includes(file.type)) {
+      //     return false; 
+      //   }
         
-        return true;
-      }
+      //   return true;
+      // }
 
       $("#blog-form").submit(function (e) {
         e.preventDefault();
-        const formData = new FormData(this);
-        const imageFile = $("#imageInput")[0].files[0];
+      //  const imageFile = $("#imageInput")[0].files[0];
 
-        if (!isValidImage(imageFile)) {
-          alert("Please select a valid image file (JPEG, PNG, GIF, BMP, TIFF, WebP, SVG, ICO, PSD, RAW).");
-          return;
-        }
+      //   if (!isValidImage(imageFile)) {
+      //     alert("Please select a valid image file (JPEG, PNG, GIF, BMP, TIFF, WebP, SVG, ICO, PSD, RAW).");
+      //     return;
+      //   }
+      //   const authorname=$('#aname').val()
+      //   console.log(authorname);
 
         $.ajax({
           type: "POST",
           url: "/createblog",
-          data: formData,
-          contentType: false,
-          processData: false,
+          data: $(this).serialize(),
           success: function (response) {
             alert(response);
             $("#blog-form")[0].reset(); 
