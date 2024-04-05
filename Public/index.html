@@ -110,59 +110,6 @@
         <p>&copy; 2024 Blogsite. All rights reserved.</p>
       </footer>
     </div>
-    <script>
-      function diretoregister() {
-        const userclickedlink = document.getElementById("register");
-        userclickedlink.addEventListener("click", (event) => {
-          event.preventDefault();
-
-          const href = userclickedlink.getAttribute("href");
-
-          window.location.href = href;
-        });
-      }
-      function directLogin() {
-        const userclickedlink = document.getElementById("login");
-        userclickedlink.addEventListener("click", (event) => {
-          event.preventDefault();
-
-          const href = userclickedlink.getAttribute("href");
-
-          window.location.href = href;
-        });
-      }
-      function directCreateblog() {
-        const userclickedlink = document.getElementById("create");
-        userclickedlink.addEventListener("click", (event) => {
-          event.preventDefault();
-
-          const href = userclickedlink.getAttribute("href");
-
-          window.location.href = href;
-        });
-      }
-      directCreateblog();
-      directLogin();
-      diretoregister();
-
-      $(document).ready(function () {
-        function getData() {
-
-      $.ajax({
-        type:'get',
-        url:'/blogs',
-        
-        success:function(responseText){
-        alert('hello');
-        },
-        error: function(error){
-          console.error('Error:', error);
-        }
-      })
-        }
-
-      getData();
-      });
-    </script>
+    <script src="./blogserve.js"></script>
   </body>
 </html>

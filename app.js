@@ -3,11 +3,10 @@ const dbconn = require("./DBconfig/Dbconnection");
 const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const ejs = require("ejs");
 const Joi = require("joi");
 const models = require("./models/blogschema");
 const path = require("path");
-const { model } = require("mongoose");
+
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -26,7 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
@@ -98,7 +97,7 @@ app.post("/createblog", async (req, res) => {
       blogtitle: Joi.string().min(5).required(),
       blogdes: Joi.string().min(5).required(),
       blogcontent: Joi.string().min(5).required(),
-      image: Joi.string().min(5),
+      // image: Joi.string().min(5),
     });
 
     const validateblog = blogvalidateschema.validate(req.body);
@@ -109,6 +108,7 @@ app.post("/createblog", async (req, res) => {
     const { authorname, blogtitle, blogdes, blogcontent } = req.body;
 
     const storeblog = new models.BlogModel({
+
       authorname,
       blogtitle,
       blogdescription: blogdes,
@@ -147,7 +147,7 @@ app.post("/authordesc", async (req, res) => {
       github,
       academic,
     });
-    console.log(req.body);
+
     await authors.save();
 
     res.send("Blog published successfully with author details");
@@ -158,21 +158,41 @@ app.post("/authordesc", async (req, res) => {
 });
 
 //fetching blogs from mongodb
-
 app.get("/blogs", async (req, res) => {
   try {
-    const fetchData = await models.BlogModel.find({})
-    .limit(2)
-  .select('authorname')
-    .exec();
-    
-    
-    return res.send(fetchData);
-   
+    const fetchBlogs = await models.BlogModel.find({})
+      .limit(6)
+      .select("authorname blogtitle blogdescription  ")
+      .exec();
+
+        return res.send(fetchBlogs);
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: "Failed to load data" });
   }
 });
+
+app.get("/displayblog", async (req, res) => {
+  try {
+    const blogid = req.query.id; 
+    console.log("Blog ID:", blogid);
+
+    const wholeBlog = await models.BlogModel.findById(blogid)
+      .select("authorname blogtitle blogdescription blogcontent")
+      .exec();
+    console.log("Retrieved Blog:", wholeBlog);
+
+    if (!wholeBlog) {
+      console.log("Blog not found");
+      return res.status(404).json('Blog not found');
+    }
+
+    return res.status(200).send(wholeBlog);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).send('Internal server error');
+  }
+});
+
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

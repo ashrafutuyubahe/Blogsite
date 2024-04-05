@@ -80,5 +80,16 @@ body {
   }
   .section2 {
     color: black;
-    height: 100vh;
+    height: 200vh;
   }
+  .section2 .blog{
+    font-family: sans-serif;
+    font-style: italic;
+    border: 1px solid black;
+    border-radius: .0.1rem;
+    background-color: rgb(196, 193, 193);
+  }
+  /* .blog #blogtitle:hover{
+    background-color: blue;
+    
+  } */
