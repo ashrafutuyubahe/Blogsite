@@ -6,6 +6,8 @@ const session = require("express-session");
 const Joi = require("joi");
 const models = require("./models/blogschema");
 const path = require("path");
+const  Mongoose  = require("mongoose");
+
 
 require("dotenv").config();
 const app = express();
@@ -92,7 +94,7 @@ app.get("/createblog", (req, res) => {
 
 app.post("/createblog", async (req, res) => {
   try {
-    const blogvalidateschema = Joi.object({
+    const blogvalidateschema = Joi.object({ 
       authorname: Joi.string().required(),
       blogtitle: Joi.string().min(5).required(),
       blogdes: Joi.string().min(5).required(),
@@ -108,7 +110,6 @@ app.post("/createblog", async (req, res) => {
     const { authorname, blogtitle, blogdes, blogcontent } = req.body;
 
     const storeblog = new models.BlogModel({
-
       authorname,
       blogtitle,
       blogdescription: blogdes,
@@ -158,41 +159,63 @@ app.post("/authordesc", async (req, res) => {
 });
 
 //fetching blogs from mongodb
+const { ObjectId } = require('mongoose').Types;
+
 app.get("/blogs", async (req, res) => {
   try {
     const fetchBlogs = await models.BlogModel.find({})
-      .limit(6)
-      .select("authorname blogtitle blogdescription  ")
+      .limit(2)
+      .select("authorname blogtitle blogdescription")
       .exec();
 
-        return res.send(fetchBlogs);
+    // Map fetched blogs to a new array with ObjectId included
+    const blogsWithId = fetchBlogs.map(blog => ({
+      _id:new ObjectId(blog._id), // Convert ObjectId to Mongoose ObjectId
+      data: blog
+    }));
+
+    return res.send(blogsWithId);
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: "Failed to load data" });
   }
 });
 
+// app.get("/displayblog", (req, res) => {
+//   res.render("displayblog");
+// });
+
 app.get("/displayblog", async (req, res) => {
   try {
-    const blogid = req.query.id; 
-    console.log("Blog ID:", blogid);
+     const blogid = req.query.id;
+          console.log(blogid)
+    // if (!Mongoose.Types.ObjectId.isValid(blogid)) {
+    //    console.log('Invalid blog ID');
+      
+    //   console.log(req.params.id)
 
-    const wholeBlog = await models.BlogModel.findById(blogid)
+    //   return res.status(400).json('Invalid blog ID');
+    // }
+   
+    //  console.log("Blog ID:", blogid);
+     wholeBlog = await models.BlogModel.findOne({ _id: blogid })
       .select("authorname blogtitle blogdescription blogcontent")
-      .exec();
-    console.log("Retrieved Blog:", wholeBlog);
+      .exec(); 
+
+      console.log(wholeBlog);
+     
 
     if (!wholeBlog) {
       console.log("Blog not found");
-      return res.status(404).json('Blog not found');
+      return res.status(404).json("Blog not found");
     }
 
-    return res.status(200).send(wholeBlog);
+     console.log(wholeBlog)
+     res.render("displayblog", { blog: wholeBlog }); 
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).send('Internal server error');
+    return res.status(500).send("Internal server error");
   }
 });
-
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
