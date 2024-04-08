@@ -164,7 +164,7 @@ const { ObjectId } = require('mongoose').Types;
 app.get("/blogs", async (req, res) => {
   try {
     const fetchBlogs = await models.BlogModel.find({})
-      .limit(2)
+      .limit(3)
       .select("authorname blogtitle blogdescription")
       .exec();
 
