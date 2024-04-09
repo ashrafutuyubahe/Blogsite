@@ -58,6 +58,7 @@ $(document).ready(function () {
         <h3 class="blogtitle"><a href="displayblog?id=${element._id}">${element.data.blogtitle}</a></h3>
           <h5>${element.data.blogdescription}</h5>
           <p>written by: ${element.data.authorname}</p>
+          <p> written  on ${element.data.date}</p>
         </div>
       `;
       section2.append(fetcheddata);
@@ -74,7 +75,7 @@ $(document).ready(function () {
           id: blogid
         },
         success: function (response) {
-          alert('hello');
+        console.log(response);
         },
         error: function (error) {
           console.error("Error:", error);
@@ -85,3 +86,7 @@ $(document).ready(function () {
 
   getData();
 });
+
+
+
+

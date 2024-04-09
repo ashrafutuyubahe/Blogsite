@@ -1,4 +1,7 @@
 const express = require("express");
+const _=require('lodash');
+const bcrypt= require('bcrypt');
+const jwt= require('jsonwebtoken');
 const dbconn = require("./DBconfig/Dbconnection");
 const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
@@ -6,8 +9,7 @@ const session = require("express-session");
 const Joi = require("joi");
 const models = require("./models/blogschema");
 const path = require("path");
-const  Mongoose  = require("mongoose");
-
+const Mongoose = require("mongoose");
 
 require("dotenv").config();
 const app = express();
@@ -44,21 +46,31 @@ app.post("/register", async (req, res) => {
     });
 
     const result = uservalidationschema.validate(req.body);
-
+ 
     if (result.error) {
       return res.status(400).send(result.error.details[0].message);
     }
 
-    const { username, useremail, userpassword } = req.body;
+    let user= usermodel.findOne({useremail:req.body.useremail});
+    if(user){
+       return res.status(400).send('user already registered.please register yourself with other Email ');
+    }
+
+    const  {username, useremail, userpassword } = req.body
+    const salt = await bcrypt.genSalt(10);
+    const hashedpassword = await bcrypt.hash(userpassword, salt);
+    console.log(hashedpassword); 
+    console.log(salt)
+
     const newUser = new usermodel({
       username: username,
       useremail: useremail,
-      userpassword: userpassword,
+      userpassword: hashedpassword,
     });
 
     const savedUser = await newUser.save();
-    console.log("User saved successfully:", savedUser);
-    res.send("Registration successful");
+   
+    res.send("Registration is successfully done");
   } catch (error) {
     console.error("Error during registration:", error.message);
     res.status(500).send("Internal Server Error");
@@ -74,9 +86,13 @@ app.post("/login", async (req, res) => {
     const { useremail } = req.body;
     const { userpassword } = req.body;
 
-    const user = await usermodel.findOne({ useremail });
+    const user = await usermodel.findOne({ useremail,userpassword });
 
-    if (!user || user.userpassword !== userpassword) {
+    // if (!user || user.userpassword !== userpassword) {
+    //   return res.send("Invalid email or password");
+    // }
+    const validatePassword=  await bcrypt.compare(req.body.userpassword,user.userpassword);
+    if(!validatePassword){
       return res.send("Invalid email or password");
     }
 
@@ -94,7 +110,7 @@ app.get("/createblog", (req, res) => {
 
 app.post("/createblog", async (req, res) => {
   try {
-    const blogvalidateschema = Joi.object({ 
+    const blogvalidateschema = Joi.object({
       authorname: Joi.string().required(),
       blogtitle: Joi.string().min(5).required(),
       blogdes: Joi.string().min(5).required(),
@@ -108,7 +124,7 @@ app.post("/createblog", async (req, res) => {
     }
 
     const { authorname, blogtitle, blogdes, blogcontent } = req.body;
-
+    
     const storeblog = new models.BlogModel({
       authorname,
       blogtitle,
@@ -158,20 +174,20 @@ app.post("/authordesc", async (req, res) => {
   }
 });
 
-//fetching blogs from mongodb
-const { ObjectId } = require('mongoose').Types;
+
+const { ObjectId } = require("mongoose").Types;
 
 app.get("/blogs", async (req, res) => {
   try {
     const fetchBlogs = await models.BlogModel.find({})
-      .limit(3)
-      .select("authorname blogtitle blogdescription")
+      
+      .select("authorname blogtitle blogdescription date")
       .exec();
 
-    // Map fetched blogs to a new array with ObjectId included
-    const blogsWithId = fetchBlogs.map(blog => ({
-      _id:new ObjectId(blog._id), // Convert ObjectId to Mongoose ObjectId
-      data: blog
+    
+    const blogsWithId = fetchBlogs.map((blog) => ({
+      _id: new ObjectId(blog._id), 
+      data: blog,
     }));
 
     return res.send(blogsWithId);
@@ -181,37 +197,23 @@ app.get("/blogs", async (req, res) => {
   }
 });
 
-// app.get("/displayblog", (req, res) => {
-//   res.render("displayblog");
-// });
-
 app.get("/displayblog", async (req, res) => {
   try {
-     const blogid = req.query.id;
-          console.log(blogid)
-    // if (!Mongoose.Types.ObjectId.isValid(blogid)) {
-    //    console.log('Invalid blog ID');
-      
-    //   console.log(req.params.id)
-
-    //   return res.status(400).json('Invalid blog ID');
-    // }
-   
-    //  console.log("Blog ID:", blogid);
-     wholeBlog = await models.BlogModel.findOne({ _id: blogid })
+    const blogid = req.query.id;
+    
+      if (!Mongoose.Types.ObjectId.isValid(blogid)) {
+      return res.status(400).json("Invalid blog ID");
+    }
+ 
+    wholeBlog = await models.BlogModel.findOne({ _id: blogid })
       .select("authorname blogtitle blogdescription blogcontent")
-      .exec(); 
-
-      console.log(wholeBlog);
-     
+      .exec();
 
     if (!wholeBlog) {
-      console.log("Blog not found");
       return res.status(404).json("Blog not found");
     }
 
-     console.log(wholeBlog)
-     res.render("displayblog", { blog: wholeBlog }); 
+    res.render("displayblog", { blog: wholeBlog });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).send("Internal server error");

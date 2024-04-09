@@ -87,7 +87,7 @@ h5 a{
                 <input type="text" id="name" name="username" >
             </div>
             <button type="submit">Register</a></button>
-            <h5>already have  an account.<a  href="./login.html">Log in</a></h5>
+            <h5>already have  an account.<a id="haveAccount" href="/login">Log in</a></h5>
         </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -110,6 +110,18 @@ h5 a{
           });
         });
       });
+     function goToregister(){
+        $.ajax({
+            type: 'get',
+            url: '/login',
+           success: function(response) {
+            alert('hello')             
+            },   
+            error: function(xhr, status, error) {
+              alert(xhr.responseText); 
+            }
+          });
+     }
     </script>
      
 </body>
