@@ -1,7 +1,8 @@
 const express = require("express");
-const _=require('lodash');
-const bcrypt= require('bcrypt');
-const jwt= require('jsonwebtoken');
+const _ = require("lodash");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const ejs= require('ejs')
 const dbconn = require("./DBconfig/Dbconnection");
 const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
@@ -11,9 +12,10 @@ const models = require("./models/blogschema");
 const path = require("path");
 const Mongoose = require("mongoose");
 
+
 require("dotenv").config();
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -46,21 +48,25 @@ app.post("/register", async (req, res) => {
     });
 
     const result = uservalidationschema.validate(req.body);
- 
+
     if (result.error) {
       return res.status(400).send(result.error.details[0].message);
     }
 
-    let user= usermodel.findOne({useremail:req.body.useremail});
-    if(user){
-       return res.status(400).send('user already registered.please register yourself with other Email ');
+    let user = usermodel.findOne({ useremail: req.body.useremail });
+    if (user) {
+      return res
+        .status(400)
+        .send(
+          "user already registered.please register yourself with other Email "
+        );
     }
 
-    const  {username, useremail, userpassword } = req.body
+    const { username, useremail, userpassword } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(userpassword, salt);
-    console.log(hashedpassword); 
-    console.log(salt)
+    console.log(hashedpassword);
+    console.log(salt);
 
     const newUser = new usermodel({
       username: username,
@@ -69,7 +75,7 @@ app.post("/register", async (req, res) => {
     });
 
     const savedUser = await newUser.save();
-   
+
     res.send("Registration is successfully done");
   } catch (error) {
     console.error("Error during registration:", error.message);
@@ -77,38 +83,57 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.get("/login", (req, res) => {
+app.get("/login", (req,res) => {
   res.render("login");
 });
 
 app.post("/login", async (req, res) => {
   try {
-    const { useremail } = req.body;
-    const { userpassword } = req.body;
+    const { useremail, userpassword } = req.body;
+     
+    const user = await usermodel.findOne({ useremail });
+    if (!user) return res.status(400).send("Invalid email or password");
 
-    const user = await usermodel.findOne({ useremail,userpassword });
+    const validPassword = await bcrypt.compare(userpassword, user.userpassword);
+    if (!validPassword) return res.status(400).send("Invalid email or password");
+     const token= jwt.sign({_id:user.id,username:user.username},'privatekey');
+     console.log(token)
 
-    // if (!user || user.userpassword !== userpassword) {
-    //   return res.send("Invalid email or password");
-    // }
-    const validatePassword=  await bcrypt.compare(req.body.userpassword,user.userpassword);
-    if(!validatePassword){
-      return res.send("Invalid email or password");
-    }
-
-    res.send("Login successful");
+    res.json(token);
   } catch (error) {
-    res.send("Error during login:", error.message);
-
+    console.error("Error during login:", error.message);
     res.status(500).send("Internal Server Error");
   }
 });
 
-app.get("/createblog", (req, res) => {
+// //userauth
+// // Middleware to verify JWT token   
+// const verifyToken = (req, res, next) => {
+//   const token = req.header('Authorization');
+//   if (!token) return res.status(401).send('Access Denied');
+
+//   try {
+//     const decoded = jwt.verify(token, 'privatekey');
+//     req.user = decoded;
+//     next();
+//   } catch (error) {
+//     res.status(400).send('Invalid Token');
+//   }
+// };
+
+// // Example of a protected route
+// app.get('/protected', verifyToken, (req, res) => {
+//   // Access req.user to get user information
+//   res.send('You are authenticated');
+// });
+
+
+
+app.get("/createblog", (req,res) => {
   res.render("createblog");
 });
 
-app.post("/createblog", async (req, res) => {
+app.post("/createblog",async (req, res) => {
   try {
     const blogvalidateschema = Joi.object({
       authorname: Joi.string().required(),
@@ -124,7 +149,7 @@ app.post("/createblog", async (req, res) => {
     }
 
     const { authorname, blogtitle, blogdes, blogcontent } = req.body;
-    
+
     const storeblog = new models.BlogModel({
       authorname,
       blogtitle,
@@ -162,7 +187,7 @@ app.post("/authordesc", async (req, res) => {
     const authors = new models.authorModel({
       location,
       github,
-      academic,
+      academic,  
     });
 
     await authors.save();
@@ -174,19 +199,17 @@ app.post("/authordesc", async (req, res) => {
   }
 });
 
-
 const { ObjectId } = require("mongoose").Types;
 
 app.get("/blogs", async (req, res) => {
   try {
     const fetchBlogs = await models.BlogModel.find({})
-      
+
       .select("authorname blogtitle blogdescription date")
       .exec();
 
-    
     const blogsWithId = fetchBlogs.map((blog) => ({
-      _id: new ObjectId(blog._id), 
+      _id: new ObjectId(blog._id),
       data: blog,
     }));
 
@@ -200,11 +223,11 @@ app.get("/blogs", async (req, res) => {
 app.get("/displayblog", async (req, res) => {
   try {
     const blogid = req.query.id;
-    
-      if (!Mongoose.Types.ObjectId.isValid(blogid)) {
+
+    if (!Mongoose.Types.ObjectId.isValid(blogid)) {
       return res.status(400).json("Invalid blog ID");
     }
- 
+
     wholeBlog = await models.BlogModel.findOne({ _id: blogid })
       .select("authorname blogtitle blogdescription blogcontent")
       .exec();
