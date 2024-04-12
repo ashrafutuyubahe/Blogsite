@@ -13,6 +13,7 @@ const path = require("path");
 const Mongoose = require("mongoose");
 
 
+
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -83,8 +84,12 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.get("/login", (req,res) => {
-  res.render("login");
+//secrete key
+const secretKey = 'privatekey';
+
+app.get("/login",async (req,res) => {
+  res.render('login')
+ 
 });
 
 app.post("/login", async (req, res) => {
@@ -95,42 +100,45 @@ app.post("/login", async (req, res) => {
     if (!user) return res.status(400).send("Invalid email or password");
 
     const validPassword = await bcrypt.compare(userpassword, user.userpassword);
-    if (!validPassword) return res.status(400).send("Invalid email or password");
-     const token= jwt.sign({_id:user.id,username:user.username},'privatekey');
-     console.log(token)
-
-    res.json(token);
+    if (!validPassword) return res.sendStatus(400);
+    
+     const token= jwt.sign({username:user.username},secretKey);
+      
+      res.setHeader('Authorization', `Bearer ${token}`);
+     res.send('success')
+     
+    
   } catch (error) {
     console.error("Error during login:", error.message);
     res.status(500).send("Internal Server Error");
   }
 });
 
-// //userauth
-// // Middleware to verify JWT token   
-// const verifyToken = (req, res, next) => {
-//   const token = req.header('Authorization');
-//   if (!token) return res.status(401).send('Access Denied');
+//middleware to handle authentication
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  console.log(authHeader);
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token == null) return res.status(401).send('You have to log in first to create a Blog Post'); 
 
-//   try {
-//     const decoded = jwt.verify(token, 'privatekey');
-//     req.user = decoded;
-//     next();
-//   } catch (error) {
-//     res.status(400).send('Invalid Token');
-//   }
-// };
-
-// // Example of a protected route
-// app.get('/protected', verifyToken, (req, res) => {
-//   // Access req.user to get user information
-//   res.send('You are authenticated');
-// });
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) return res.sendStatus(403); 
+    req.username = decoded.username; 
+    next(); 
+  });
+}
 
 
-
-app.get("/createblog", (req,res) => {
-  res.render("createblog");
+app.get("/createblog", authenticateToken, async (req, res) => {
+  try {
+    const username = req.username;
+    const validateUser = await usermodel.findOne({ username });
+    if (!validateUser) return res.send('Please log in before creating Blog');
+    res.render("createblog");
+  } catch (error) {
+    console.error("Error during authentication:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 app.post("/createblog",async (req, res) => {
@@ -243,4 +251,4 @@ app.get("/displayblog", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}...`));
