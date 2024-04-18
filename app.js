@@ -9,6 +9,8 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const Joi = require("joi");
 const models = require("./models/blogschema");
+const homeroutes= require('./routes/homeRoutes');
+const registerRoutes= require('./routes/registerRoutes');
 const path = require("path");
 const Mongoose = require("mongoose");
 
@@ -20,25 +22,23 @@ const PORT = process.env.PORT || 5000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(
-  session({
-    secret: "your_secret_key",
-    resave: false,
-    saveUninitialized: true,
-  })
-);
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-app.get("/", async (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+
+
+app.use('/api',homeroutes)
 
 app.get("/register", (req, res) => {
   res.render("register");
 });
+
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.post("/register", async (req, res) => {
   try {
@@ -66,9 +66,7 @@ app.post("/register", async (req, res) => {
     const { username, useremail, userpassword } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(userpassword, salt);
-    console.log(hashedpassword);
-    console.log(salt);
-
+    
     const newUser = new usermodel({
       username: username,
       useremail: useremail,
@@ -83,6 +81,7 @@ app.post("/register", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 //secrete key
 const secretKey = 'privatekey';
@@ -114,7 +113,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//middleware to handle authentication
+
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   console.log(authHeader);
