@@ -13,6 +13,7 @@ const homeroutes= require('./routes/homeRoutes');
 const registerRoutes= require('./routes/registerRoutes');
 const path = require("path");
 const Mongoose = require("mongoose");
+const { error } = require("console");
 
 
 
@@ -246,6 +247,51 @@ app.get("/displayblog", async (req, res) => {
     res.render("displayblog", { blog: wholeBlog });
   } catch (error) {
     console.error("Error:", error);
+    return res.status(500).send("Internal server error");
+  }
+});
+
+//delete api
+
+app.delete('/deleteblog/',async(req,res)=>{
+  try{
+    const {id}= req.params;
+        const findBlogExist= await models.BlogModel.findOne({id});
+      if(!findBlogExist) return res.status(404).send(`blog doesn't exists`)
+  
+      console.log(findBlogExist);
+    const deleteblog= models.BlogModel.findByIdAndDelete({id});
+    if(!deleteblog) return res.status(400).send('sorry !!! the blog was deleted')
+    return res.send('blog  is deleted ');
+  } catch(err){
+    console.error("Error:", error);
+    return res.status(500).send("Internal server error");
+  }
+})
+
+//update api
+app.put('/updateblog/:id', async (req, res) => { // <-- Add /:id here
+  try {
+    const { id } = req.params;
+    const { authorname, blogtitle, blogdescription, blogcontent } = req.body;
+    const findBlogExist = await models.BlogModel.findById(id); // Use findById instead of findOne
+
+    if (!findBlogExist) 
+      return res.status(404).send(`Blog doesn't exist`);
+
+    const updateBlog = await models.BlogModel.findByIdAndUpdate(id, {
+      authorname,
+      blogtitle,
+      blogdescription,
+      blogcontent
+    }, { new: true }); // Ensure to set { new: true } to return the updated document
+
+    if (!updateBlog) 
+      return res.status(401).send('Failed to update the blog');
+
+    return res.send('Blog is updated');
+  } catch (err) {
+    console.error("Error:", err);
     return res.status(500).send("Internal server error");
   }
 });
