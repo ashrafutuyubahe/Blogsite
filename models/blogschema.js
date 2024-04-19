@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { buffer } = require("stream/consumers");
 
 const blogSchema = new mongoose.Schema({
    authorname: {
@@ -23,6 +24,12 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 50,
+  },
+
+  image:{
+  type:buffer,
+  
+
   },
   date: {
     type: Date,
