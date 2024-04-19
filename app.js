@@ -6,7 +6,7 @@ const ejs= require('ejs')
 const dbconn = require("./DBconfig/Dbconnection");
 const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
-const session = require("express-session");
+const session = require("express-session"); 
 const Joi = require("joi");
 const models = require("./models/blogschema");
 const homeroutes= require('./routes/homeRoutes');
@@ -14,6 +14,8 @@ const registerRoutes= require('./routes/registerRoutes');
 const path = require("path");
 const Mongoose = require("mongoose");
 const { error } = require("console");
+
+
 
 
 
@@ -35,7 +37,7 @@ app.use('/api',homeroutes)
 
 app.get("/register", (req, res) => {
   res.render("register");
-});
+}); 
 
 
 app.set("view engine", "ejs");
@@ -113,7 +115,8 @@ app.post("/login", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
+  
+  
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -141,6 +144,8 @@ app.get("/createblog", authenticateToken, async (req, res) => {
   }
 });
 
+
+
 app.post("/createblog",async (req, res) => {
   try {
     const blogvalidateschema = Joi.object({
@@ -150,6 +155,8 @@ app.post("/createblog",async (req, res) => {
       blogcontent: Joi.string().min(5).required(),
       // image: Joi.string().min(5),
     });
+
+    
 
     const validateblog = blogvalidateschema.validate(req.body);
     if (validateblog.error) {
@@ -253,7 +260,7 @@ app.get("/displayblog", async (req, res) => {
 
 //delete api
 
-app.delete('/deleteblog/',async(req,res)=>{
+app.delete('/deleteblog/:id',async(req,res)=>{
   try{
     const {id}= req.params;
         const findBlogExist= await models.BlogModel.findOne({id});
@@ -270,11 +277,11 @@ app.delete('/deleteblog/',async(req,res)=>{
 })
 
 //update api
-app.put('/updateblog/:id', async (req, res) => { // <-- Add /:id here
+app.put('/updateblog/:id', async (req, res) => { 
   try {
     const { id } = req.params;
     const { authorname, blogtitle, blogdescription, blogcontent } = req.body;
-    const findBlogExist = await models.BlogModel.findById(id); // Use findById instead of findOne
+    const findBlogExist = await models.BlogModel.findById(id); 
 
     if (!findBlogExist) 
       return res.status(404).send(`Blog doesn't exist`);
@@ -284,7 +291,7 @@ app.put('/updateblog/:id', async (req, res) => { // <-- Add /:id here
       blogtitle,
       blogdescription,
       blogcontent
-    }, { new: true }); // Ensure to set { new: true } to return the updated document
+    });
 
     if (!updateBlog) 
       return res.status(401).send('Failed to update the blog');
