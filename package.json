@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/ashrafutuyubahe/Blogsite#readme",
   "dependencies": {
+    "async-handler": "^0.0.3",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
@@ -27,6 +28,7 @@
     "joi": "^17.12.2",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "mongoose": "^8.2.4"
+    "mongoose": "^8.2.4",
+    "multer": "^1.4.5-lts.1"
   }
 }

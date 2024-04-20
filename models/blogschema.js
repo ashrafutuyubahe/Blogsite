@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { buffer } = require("stream/consumers");
 
 const blogSchema = new mongoose.Schema({
-   authorname: {
+  authorname: {
     type: String,
     required: true,
     minlength: 3,
@@ -26,11 +26,6 @@ const blogSchema = new mongoose.Schema({
     minlength: 50,
   },
 
-  image:{
-  type:buffer,
-  
-
-  },
   date: {
     type: Date,
     default: Date.now,
@@ -48,5 +43,5 @@ const BlogModel = mongoose.model("Blog", blogSchema);
 
 module.exports = {
   authorModel,
-  BlogModel
+  BlogModel,
 };

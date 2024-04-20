@@ -2,21 +2,17 @@ const express = require("express");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const ejs= require('ejs')
+const ejs = require("ejs");
 const dbconn = require("./DBconfig/Dbconnection");
 const usermodel = require("./models/userschema");
 const bodyParser = require("body-parser");
-const session = require("express-session"); 
 const Joi = require("joi");
 const models = require("./models/blogschema");
-const homeroutes= require('./routes/homeRoutes');
-const registerRoutes= require('./routes/registerRoutes');
+const homeroutes = require("./routes/homeRoutes");
+const registerRoutes = require("./routes/registerRoutes");
 const path = require("path");
 const Mongoose = require("mongoose");
-const { error } = require("console");
-
-
-
+const imagehandle= require('./routes/imageupload');
 
 
 require("dotenv").config();
@@ -31,14 +27,18 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+app.use("/api", homeroutes);
+
+app.use('/imageuplaod',imagehandle);
 
 
-app.use('/api',homeroutes)
+
+
+
 
 app.get("/register", (req, res) => {
   res.render("register");
-}); 
-
+});
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -69,7 +69,7 @@ app.post("/register", async (req, res) => {
     const { username, useremail, userpassword } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(userpassword, salt);
-    
+
     const newUser = new usermodel({
       username: username,
       useremail: useremail,
@@ -85,58 +85,54 @@ app.post("/register", async (req, res) => {
   }
 });
 
-
 //secrete key
-const secretKey = 'privatekey';
+const secretKey = "privatekey";
 
-app.get("/login",async (req,res) => {
-  res.render('login')
- 
+app.get("/login", async (req, res) => {
+  res.render("login");
 });
 
 app.post("/login", async (req, res) => {
   try {
     const { useremail, userpassword } = req.body;
-     
+
     const user = await usermodel.findOne({ useremail });
     if (!user) return res.status(400).send("Invalid email or password");
 
     const validPassword = await bcrypt.compare(userpassword, user.userpassword);
     if (!validPassword) return res.sendStatus(400);
-    
-     const token= jwt.sign({username:user.username},secretKey);
-      
-      res.setHeader('Authorization', `Bearer ${token}`);
-     res.send('success')
-     
-    
+
+    const token = jwt.sign({ username: user.username }, secretKey);
+
+    res.setHeader("Authorization", `Bearer ${token}`);
+    res.send("success");
   } catch (error) {
     console.error("Error during login:", error.message);
     res.status(500).send("Internal Server Error");
   }
 });
-  
-  
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers["authorization"];
   console.log(authHeader);
-  const token = authHeader && authHeader.split(' ')[1];
-  if (token == null) return res.status(401).send('You have to log in first to create a Blog Post'); 
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null)
+    return res
+      .status(401)
+      .send("You have to log in first to create a Blog Post");
 
   jwt.verify(token, secretKey, (err, decoded) => {
-    if (err) return res.sendStatus(403); 
-    req.username = decoded.username; 
-    next(); 
+    if (err) return res.sendStatus(403);
+    req.username = decoded.username;
+    next();
   });
 }
-
 
 app.get("/createblog", authenticateToken, async (req, res) => {
   try {
     const username = req.username;
     const validateUser = await usermodel.findOne({ username });
-    if (!validateUser) return res.send('Please log in before creating Blog');
+    if (!validateUser) return res.send("Please log in before creating Blog");
     res.render("createblog");
   } catch (error) {
     console.error("Error during authentication:", error.message);
@@ -144,9 +140,7 @@ app.get("/createblog", authenticateToken, async (req, res) => {
   }
 });
 
-
-
-app.post("/createblog",async (req, res) => {
+app.post("/createblog", async (req, res) => {
   try {
     const blogvalidateschema = Joi.object({
       authorname: Joi.string().required(),
@@ -155,8 +149,6 @@ app.post("/createblog",async (req, res) => {
       blogcontent: Joi.string().min(5).required(),
       // image: Joi.string().min(5),
     });
-
-    
 
     const validateblog = blogvalidateschema.validate(req.body);
     if (validateblog.error) {
@@ -202,7 +194,7 @@ app.post("/authordesc", async (req, res) => {
     const authors = new models.authorModel({
       location,
       github,
-      academic,  
+      academic,
     });
 
     await authors.save();
@@ -235,6 +227,9 @@ app.get("/blogs", async (req, res) => {
   }
 });
 
+
+
+
 app.get("/displayblog", async (req, res) => {
   try {
     const blogid = req.query.id;
@@ -242,10 +237,7 @@ app.get("/displayblog", async (req, res) => {
     if (!Mongoose.Types.ObjectId.isValid(blogid)) {
       return res.status(400).json("Invalid blog ID");
     }
-
-    wholeBlog = await models.BlogModel.findOne({ _id: blogid })
-      .select("authorname blogtitle blogdescription blogcontent")
-      .exec();
+    const wholeBlog = await models.BlogModel.findById(blogid).lean();
 
     if (!wholeBlog) {
       return res.status(404).json("Blog not found");
@@ -260,43 +252,42 @@ app.get("/displayblog", async (req, res) => {
 
 //delete api
 
-app.delete('/deleteblog/:id',async(req,res)=>{
-  try{
-    const {id}= req.params;
-        const findBlogExist= await models.BlogModel.findOne({id});
-      if(!findBlogExist) return res.status(404).send(`blog doesn't exists`)
-  
-      console.log(findBlogExist);
-    const deleteblog= models.BlogModel.findByIdAndDelete({id});
-    if(!deleteblog) return res.status(400).send('sorry !!! the blog was deleted')
-    return res.send('blog  is deleted ');
-  } catch(err){
+app.delete("/deleteblog/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const findBlogExist = await models.BlogModel.findOne({ id });
+    if (!findBlogExist) return res.status(404).send(`blog doesn't exists`);
+
+    console.log(findBlogExist);
+    const deleteblog = models.BlogModel.findByIdAndDelete({ id });
+    if (!deleteblog)
+      return res.status(400).send("sorry !!! the blog was deleted");
+    return res.send("blog  is deleted ");
+  } catch (err) {
     console.error("Error:", error);
     return res.status(500).send("Internal server error");
   }
-})
+});
 
 //update api
-app.put('/updateblog/:id', async (req, res) => { 
+app.put("/updateblog/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { authorname, blogtitle, blogdescription, blogcontent } = req.body;
-    const findBlogExist = await models.BlogModel.findById(id); 
+    const findBlogExist = await models.BlogModel.findById(id);
 
-    if (!findBlogExist) 
-      return res.status(404).send(`Blog doesn't exist`);
+    if (!findBlogExist) return res.status(404).send(`Blog doesn't exist`);
 
     const updateBlog = await models.BlogModel.findByIdAndUpdate(id, {
       authorname,
       blogtitle,
       blogdescription,
-      blogcontent
+      blogcontent,
     });
 
-    if (!updateBlog) 
-      return res.status(401).send('Failed to update the blog');
+    if (!updateBlog) return res.status(401).send("Failed to update the blog");
 
-    return res.send('Blog is updated');
+    return res.send("Blog is updated");
   } catch (err) {
     console.error("Error:", err);
     return res.status(500).send("Internal server error");
