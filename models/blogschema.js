@@ -25,6 +25,9 @@ const blogSchema = new mongoose.Schema({
     required: true,
     minlength: 50,
   },
+  image: {
+    images: { type: mongoose.Schema.Types.ObjectId, ref: "imagemodel" },
+  },
 
   date: {
     type: Date,

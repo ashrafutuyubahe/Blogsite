@@ -34,6 +34,10 @@ app.get("/register", (req, res) => {
   res.render("register");
 });
 
+// const dataof= req.body.blogid;  or const  refactor= _.pick(blogid,re.body);
+
+
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
