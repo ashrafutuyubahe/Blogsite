@@ -9,7 +9,6 @@ const bodyParser = require("body-parser");
 const Joi = require("joi");
 const models = require("./models/blogschema");
 const homeroutes = require("./routes/homeRoutes");
-const registerRoutes = require("./routes/registerRoutes");
 const path = require("path");
 const Mongoose = require("mongoose");
 const imagehandle = require("./routes/imageupload");
