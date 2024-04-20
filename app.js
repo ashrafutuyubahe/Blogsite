@@ -12,8 +12,7 @@ const homeroutes = require("./routes/homeRoutes");
 const registerRoutes = require("./routes/registerRoutes");
 const path = require("path");
 const Mongoose = require("mongoose");
-const imagehandle= require('./routes/imageupload');
-
+const imagehandle = require("./routes/imageupload");
 
 require("dotenv").config();
 const app = express();
@@ -28,13 +27,8 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use("/api", homeroutes);
-
-app.use('/imageuplaod',imagehandle);
-
-
-
-
-
+//image uplaod
+app.use("/", imagehandle);
 
 app.get("/register", (req, res) => {
   res.render("register");
@@ -226,9 +220,6 @@ app.get("/blogs", async (req, res) => {
     res.status(500).json({ error: "Failed to load data" });
   }
 });
-
-
-
 
 app.get("/displayblog", async (req, res) => {
   try {
