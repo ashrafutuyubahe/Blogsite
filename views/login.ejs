@@ -79,27 +79,10 @@
             type: "POST",
             url: "/login",
             data: $(this).serialize(),
-            success: function (response, status, xhr) {
-              
-              if (
-                response === "success" ||
-                xhr.getResponseHeader("Authorization")
-              ) {
-                // Extract the token from the Authorization header
-                const token = xhr
-                  .getResponseHeader("Authorization")
-                  .split(" ")[1];
-                console.log(token);
-                // Store the token in the local storage
-                localStorage.setItem("token", token);
-                // Redirect the user to the desired page
-
-                alert("You are logged in");
-                window.location.href = "/";
-              } else {
-                // Handle other cases, such as unsuccessful login
-                alert("Login failed");
-              }
+            success: function (response) {
+              alert("You are logged in",response);
+              window.location.href = "/";
+             
             },
             error: function (xhr, status, error) {
               // Handle errors

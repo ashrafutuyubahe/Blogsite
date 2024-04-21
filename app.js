@@ -99,10 +99,10 @@ app.post("/login", async (req, res) => {
     if (!validPassword) return res.sendStatus(400);
 
     const token = jwt.sign({ username: user.username }, secretKey, {
-      expiresIn: "2h",
+      expiresIn: "1h",
     });
 
-   
+    console.log(token)
     return res.status(200).json({ token });
   } catch (error) {
     console.error("Error during login:", error.message);
@@ -111,16 +111,22 @@ app.post("/login", async (req, res) => {
 });
 
 function authenticateToken(req, res, next) {
-  const token = req.header("Authorization").replace("Bearer ");
+  const authHeader = req.header("Authorization");
+  
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).send("You have to log in first to create a Blog Post");
+  }
+  
+  const token = authHeader.replace("Bearer ", "");
 
-  if (token == null)
-    return res
-      .status(401)
-      .send("You have to log in first to create a Blog Post");
-
-  const decoded = jwt.verify(token, secretKey);
-  req.username = decoded.username;
-  next();
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    req.username = decoded.username;
+    next();
+  } catch (error) {
+    console.error("Error verifying token:", error.message);
+    res.status(403).send("Invalid token");
+  }
 }
 
 app.get("/createblog", authenticateToken, async (req, res) => {
