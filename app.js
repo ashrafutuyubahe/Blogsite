@@ -12,6 +12,7 @@ const homeroutes = require("./routes/homeRoutes");
 const path = require("path");
 const Mongoose = require("mongoose");
 const imagehandle = require("./routes/imageupload");
+const logOutUser= require('./routes/logout');
 const authenticateToken= require('./middlewares/authmiddleware');
 require("dotenv").config();
 const secretKey= 'privatekey'
@@ -31,6 +32,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use("/api", homeroutes);
 //image uplaod
 app.use("/", imagehandle);
+// app.use('/',logOutUser);
 
 app.get("/register", (req, res) => {
   res.render("register");
@@ -104,6 +106,17 @@ app.post("/login", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+app.get('/logout',async(req,res)=>{
+  try{
+    
+res.clearCookie('authorisation'); 
+
+res.sendFile(__filename,'index.html');
+  }catch(err){
+    res.send('error:',err);
+  }
+})
 
 
 

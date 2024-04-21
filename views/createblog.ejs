@@ -118,7 +118,8 @@
       });
     });
 
-    $('logout').click(function(){
+    $('.logout').click(function(){
+      alert('Hi do you really want to log out?')
       $.ajax({
           type: "GET",
           url: "/logout",         
