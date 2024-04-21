@@ -1,13 +1,12 @@
 
 const jwt = require("jsonwebtoken");
+const secretKey = "privatekey";
 function authenticateToken(req, res, next) {
-    const authHeader = req.header("Authorization");
+    const authHeader = req.cookies["Authorization"];
+
   
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        console.log(authHeader);
-      return res.status(401).send("Unauthorized: Missing or invalid token");
-    }
-  
+    
+  console.log(authHeader)
     const token = authHeader.split(" ")[1]; 
     try {
       const decoded = jwt.verify(token, secretKey);

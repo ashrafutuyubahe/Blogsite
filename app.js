@@ -16,9 +16,11 @@ const authenticateToken= require('./middlewares/authmiddleware');
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
+const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -94,8 +96,8 @@ app.post("/login", async (req, res) => {
     });
 
     
-    res.setHeader("Authorization", `Bearer ${token}`);
-    res.setHeader("Access-Control-Expose-Headers", "Authorization");
+    res.cookie("Authorization", `Bearer ${token}`);
+    res.cookie("Access-Control-Expose-Headers", "Authorization");
 
     return res.status(200).json({ message: "Login successful" });
   } catch (error) {
