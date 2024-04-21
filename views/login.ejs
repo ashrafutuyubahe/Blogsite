@@ -80,12 +80,12 @@
             url: "/login",
             data: $(this).serialize(),
             success: function (response) {
-              alert("You are logged in",response);
+              alert("You are logged in");
+              // localStorage.setItem("token", response.token);
+
               window.location.href = "/";
-             
             },
             error: function (xhr, status, error) {
-              
               alert(xhr.responseText);
             },
           });

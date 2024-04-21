@@ -78,12 +78,17 @@
       //     return;
       //   }
       //   const authorname=$('#aname').val()
-      //   console.log(authorname);
+      // //   console.log(authorname);
+      // const token = localStorage.getItem('token');
 
         $.ajax({
           type: "POST",
           url: "/createblog",
           data: $(this).serialize(),
+          // headers:{
+          //   'Authorization': `Bearer ${token}`, // Set token in Authorization header
+          //   'Content-Type': 'application/json',
+          // },
           success: function (response) {
             alert(response);
           

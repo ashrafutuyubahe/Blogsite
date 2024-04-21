@@ -12,7 +12,7 @@ const homeroutes = require("./routes/homeRoutes");
 const path = require("path");
 const Mongoose = require("mongoose");
 const imagehandle = require("./routes/imageupload");
-
+const authenticateToken= require('./middlewares/authmiddleware');
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -53,15 +53,7 @@ app.post("/register", async (req, res) => {
     }
 
     let user = usermodel.findOne({ useremail: req.body.useremail });
-    // if (user) {
-    //   console.log(user);
-    //   return res
-    //     .status(400)
-    //     .send(
-    //       "user already registered.please register yourself with other Email "
-    //     );
-    // }
-
+    
     const { username, useremail, userpassword } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(userpassword, salt);
@@ -87,7 +79,6 @@ const secretKey = "privatekey";
 app.get("/login", async (req, res) => {
   res.render("login");
 });
-
 app.post("/login", async (req, res) => {
   try {
     const { useremail, userpassword } = req.body;
@@ -102,32 +93,18 @@ app.post("/login", async (req, res) => {
       expiresIn: "1h",
     });
 
-    console.log(token)
-    return res.status(200).json({ token });
+    
+    res.setHeader("Authorization", `Bearer ${token}`);
+    res.setHeader("Access-Control-Expose-Headers", "Authorization");
+
+    return res.status(200).json({ message: "Login successful" });
   } catch (error) {
     console.error("Error during login:", error.message);
     res.status(500).send("Internal Server Error");
   }
 });
 
-function authenticateToken(req, res, next) {
-  const authHeader = req.header("Authorization");
-  
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).send("You have to log in first to create a Blog Post");
-  }
-  
-  const token = authHeader.replace("Bearer ", "");
 
-  try {
-    const decoded = jwt.verify(token, secretKey);
-    req.username = decoded.username;
-    next();
-  } catch (error) {
-    console.error("Error verifying token:", error.message);
-    res.status(403).send("Invalid token");
-  }
-}
 
 app.get("/createblog", authenticateToken, async (req, res) => {
   try {
