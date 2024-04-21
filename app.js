@@ -14,6 +14,7 @@ const Mongoose = require("mongoose");
 const imagehandle = require("./routes/imageupload");
 const authenticateToken= require('./middlewares/authmiddleware');
 require("dotenv").config();
+const secretKey= 'privatekey'
 const app = express();
 const PORT = process.env.PORT || 5000;
 const cookieParser = require('cookie-parser');
@@ -75,8 +76,8 @@ app.post("/register", async (req, res) => {
   }
 });
 
-//secrete key
-const secretKey = "privatekey";
+
+
 
 app.get("/login", async (req, res) => {
   res.render("login");
@@ -91,9 +92,7 @@ app.post("/login", async (req, res) => {
     const validPassword = await bcrypt.compare(userpassword, user.userpassword);
     if (!validPassword) return res.sendStatus(400);
 
-    const token = jwt.sign({ username: user.username }, secretKey, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign({ username: user.username }, secretKey);
 
     
     res.cookie("Authorization", `Bearer ${token}`);

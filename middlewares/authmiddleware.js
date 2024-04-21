@@ -1,12 +1,17 @@
 
 const jwt = require("jsonwebtoken");
-const secretKey = "privatekey";
+const ejs = require("ejs");
+const secretKey= 'privatekey'
 function authenticateToken(req, res, next) {
-    const authHeader = req.cookies["Authorization"];
+const authHeader = req.cookies["Authorization"];
 
-  
+if(!authHeader){
+    res.send('you have to log in first');
+    res.render('login');
+
+}
     
-  console.log(authHeader)
+    
     const token = authHeader.split(" ")[1]; 
     try {
       const decoded = jwt.verify(token, secretKey);
