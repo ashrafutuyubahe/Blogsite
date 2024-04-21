@@ -35,8 +35,6 @@ app.get("/register", (req, res) => {
 
 // const dataof= req.body.blogid;  or const  refactor= _.pick(blogid,re.body);
 
-
-
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -55,13 +53,14 @@ app.post("/register", async (req, res) => {
     }
 
     let user = usermodel.findOne({ useremail: req.body.useremail });
-    if (user) {
-      return res
-        .status(400)
-        .send(
-          "user already registered.please register yourself with other Email "
-        );
-    }
+    // if (user) {
+    //   console.log(user);
+    //   return res
+    //     .status(400)
+    //     .send(
+    //       "user already registered.please register yourself with other Email "
+    //     );
+    // }
 
     const { username, useremail, userpassword } = req.body;
     const salt = await bcrypt.genSalt(10);
@@ -99,10 +98,12 @@ app.post("/login", async (req, res) => {
     const validPassword = await bcrypt.compare(userpassword, user.userpassword);
     if (!validPassword) return res.sendStatus(400);
 
-    const token = jwt.sign({ username: user.username }, secretKey);
+    const token = jwt.sign({ username: user.username }, secretKey, {
+      expiresIn: "2h",
+    });
 
-    res.setHeader("Authorization", `Bearer ${token}`);
-    res.send("success");
+   
+    return res.status(200).json({ token });
   } catch (error) {
     console.error("Error during login:", error.message);
     res.status(500).send("Internal Server Error");
@@ -110,19 +111,16 @@ app.post("/login", async (req, res) => {
 });
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  console.log(authHeader);
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = req.header("Authorization").replace("Bearer ");
+
   if (token == null)
     return res
       .status(401)
       .send("You have to log in first to create a Blog Post");
 
-  jwt.verify(token, secretKey, (err, decoded) => {
-    if (err) return res.sendStatus(403);
-    req.username = decoded.username;
-    next();
-  });
+  const decoded = jwt.verify(token, secretKey);
+  req.username = decoded.username;
+  next();
 }
 
 app.get("/createblog", authenticateToken, async (req, res) => {

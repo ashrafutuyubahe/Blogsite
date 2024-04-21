@@ -60,7 +60,6 @@
     </style>
   </head>
   <body>
-    <img src="person writing.avif" alt="wow" />
     <div class="login-container">
       <form class="login-form" id="login-form" action="/login" method="post">
         <label for="email">Email</label>
@@ -81,7 +80,7 @@
             url: "/login",
             data: $(this).serialize(),
             success: function (response, status, xhr) {
-              // Check if the response contains the Authorization header
+              
               if (
                 response === "success" ||
                 xhr.getResponseHeader("Authorization")
