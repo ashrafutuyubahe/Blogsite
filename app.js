@@ -110,9 +110,8 @@ app.post("/login", async (req, res) => {
 app.get('/logout',async(req,res)=>{
   try{
     
-res.clearCookie('authorisation'); 
-
-res.sendFile(__filename,'index.html');
+res.clearCookie('authorisation');
+res.redirect('/')
   }catch(err){
     res.send('error:',err);
   }
