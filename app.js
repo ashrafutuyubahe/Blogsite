@@ -19,6 +19,12 @@ const secretKey= 'privatekey'
 const app = express();
 const PORT = process.env.PORT || 5000;
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const passport = require('passport');
+const FacebookStrategy = require('passport-facebook').Strategy;
+
+
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -37,6 +43,7 @@ app.use("/", imagehandle);
 app.get("/register", (req, res) => {
   res.render("register");
 });
+
 
 // const dataof= req.body.blogid;  or const  refactor= _.pick(blogid,re.body);
 
@@ -116,6 +123,50 @@ res.redirect('/')
     res.send('error:',err);
   }
 })
+
+//emplemting facebook  authentication
+const FACEBOOK_CLIENT_ID='754590690115206';
+ const FACEBOOK_CLIENT_SECRETE='97d8096674a91ab98a736cd0154e11e0';
+ passport.use(new FacebookStrategy({
+  ClientID:FACEBOOK_CLIENT_ID,
+  ClientSecrete:FACEBOOK_CLIENT_SECRETE,
+  callbackURL:"/facebook",
+  profileFields:['emails','diplayName','name','picture']
+ },(accessToken,refreshToken,profile,callback)=>{
+  callback(null,profile)
+ }))
+
+ passport.serializeUser((user,callback)=>{
+  callback(null,user)
+ })
+  
+ 
+ passport.deserializeUser((user,callback)=>{
+  callback(null,user)
+ })
+
+ app.use(session({
+  secret: 'ashrafuwow',
+  resave: false,
+  saveUninitialized: true
+}));
+
+//routes
+
+app.get('/login/facebook',passport.authenticate('facebook',{scope:['email']}))
+
+app.get('/facebook',passport.authenticate('facebook',(req,res)=>{
+  res.redirect('/')
+}))
+
+
+app.get('/',(req,res)=>{
+ res.send(req.user?req.user:'Not logged in , login with facebook');
+})
+
+
+
+
 
 
 
