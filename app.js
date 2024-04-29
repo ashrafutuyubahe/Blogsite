@@ -153,7 +153,7 @@ res.redirect('/')
 
 // //routes
 
-// app.get('/login/facebook',passport.authenticate('facebook',{scope:['email']}))
+// app.get("/login/facebook,passport.authenticate('facebook',{scope:['email']}))
 
 // app.get('/facebook',passport.authenticate('facebook',(req,res)=>{
 //   res.redirect('/')

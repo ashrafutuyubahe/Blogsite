@@ -57,6 +57,12 @@
       .login-form input[type="submit"]:hover {
         background-color: #45a049;
       }
+      .social-links{
+  display: flex;
+  flex-direction: column;
+
+}
+
     </style>
   </head>
   <body>
@@ -67,7 +73,12 @@
         <label for="password">Password</label>
         <input type="password" id="password" name="userpassword" />
         <input type="submit" value="Login" />
+        <div class="social-links">
+          <a  id="facebooklogin" href="/login/facebook">login with Facebook</a>               
+        <a href="/login/google">login with Google</a>
+        </div>
       </form>
+     
     </div>
 
     <script>
@@ -89,6 +100,23 @@
               alert(xhr.responseText);
             },
           });
+
+          $('#facebooklogin').click(function(event) {
+          event.preventDefault();
+    
+          $.ajax({
+            type: 'POST',
+            url: '/register',
+            data: $(this).serialize(), 
+            success: function(response) {
+            alert(response)
+              window.location.href = "/"; 
+            },   
+            error: function(xhr, status, error) {
+              alert(xhr.responseText); 
+            }
+          });
+        });
         });
       });
     </script>
