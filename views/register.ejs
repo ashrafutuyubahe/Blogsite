@@ -66,6 +66,17 @@ button[type="submit"]:hover {
 h5 a{
     text-decoration: none;
 }
+.social-links,a{
+    text-decoration: none;
+   
+    
+}
+.social-links{
+  display: flex;
+  flex-direction: column;
+
+}
+
   
     </style>
         
@@ -89,6 +100,10 @@ h5 a{
             <button type="submit">Register</a></button>
             <h5>already have  an account.<a id="haveAccount" href="/login">Log in</a></h5>
         </form>
+        <div class="social-links">
+          <a  id="facebooklogin" href="/register/facebook">Register with Facebook</a>               
+        <a href="/register/google">Register with Google</a>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -121,6 +136,24 @@ h5 a{
               alert(xhr.responseText); 
             }
           });
+
+
+          $('#facebooklogin').click(function(event) {
+          event.preventDefault();
+    
+          $.ajax({
+            type: 'POST',
+            url: '/register',
+            data: $(this).serialize(), 
+            success: function(response) {
+            alert(response)
+              window.location.href = "/"; 
+            },   
+            error: function(xhr, status, error) {
+              alert(xhr.responseText); 
+            }
+          });
+        });
      }
     </script>
      

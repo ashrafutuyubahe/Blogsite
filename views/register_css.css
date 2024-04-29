@@ -58,3 +58,8 @@ button[type="submit"]:hover {
 h5 a{
     text-decoration: none;
 }
+.social-links,a{
+    text-decoration: none;
+    color: #333;
+    
+}
