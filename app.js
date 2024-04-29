@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
-const FacebookStrategy = require('passport-facebook').Strategy;
+const FacebookStrategy = require('passport-facebook');
 
 
 
@@ -125,11 +125,11 @@ res.redirect('/')
 })
 
 //emplemting facebook  authentication
-const FACEBOOK_CLIENT_ID='754590690115206';
- const FACEBOOK_CLIENT_SECRETE='97d8096674a91ab98a736cd0154e11e0';
+// const FACEBOOK_CLIENT_ID='754590690115206';
+//  const FACEBOOK_CLIENT_SECRETE='97d8096674a91ab98a736cd0154e11e0';
  passport.use(new FacebookStrategy({
-  ClientID:FACEBOOK_CLIENT_ID,
-  ClientSecrete:FACEBOOK_CLIENT_SECRETE,
+  ClientID:'754590690115206',
+  ClientSecrete:'97d8096674a91ab98a736cd0154e11e0',
   callbackURL:"/facebook",
   profileFields:['emails','diplayName','name','picture']
  },(accessToken,refreshToken,profile,callback)=>{
