@@ -126,9 +126,6 @@ res.redirect('/')
 
 
 
-
-
-
 app.get("/createblog", authenticateToken, async (req, res) => {
   try {
     const username = req.username;
