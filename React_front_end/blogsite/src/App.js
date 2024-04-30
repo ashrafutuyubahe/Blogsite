@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import {react, useEffect, useState} from 'react';
+
+const [blogs,setblogs]=useState([]);
+
+
+useEffect({
+    fetchBlogs: () => {
+    fetch("localhost:4000/blogs")
+      .then((response) => {
+        response.json();
+
+      })
+      .then((blogs) => {
+        setblogs(blogs);
+        console.log(blogs);
+
+      });
+
+  }
+})
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   <>
+  <div className='app'>
+     {blogs.map((blog)=>{
+      return 
+      
+     })}
+  </div>
+   
+   </>
   );
 }
 
