@@ -1,0 +1,42 @@
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.blog {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.blog h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.blog h5 {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+}
+.blog p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.author-info-button {
+  display: block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.author-info-button:hover {
+  background-color: #0056b3;
+}
