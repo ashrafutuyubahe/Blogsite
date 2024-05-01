@@ -1,10 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 
-
-
-
-
  export  default function DisplayBlog() {
 
 const [blogs,setBlogs]=useState([])
