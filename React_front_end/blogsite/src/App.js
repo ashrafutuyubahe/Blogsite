@@ -4,7 +4,7 @@ function App() {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/blogs") // Note: you missed "http://" in the URL
+    fetch("localhost:4000/blogs") 
       .then((response) => response.json())
       .then((blogs) => {
         setBlogs(blogs);
