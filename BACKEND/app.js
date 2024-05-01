@@ -22,14 +22,12 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook');
-const cors= require('cors');
-
+const cors = require("cors");
 
 app.use(cors({
-  credentials:true,
-  origin:"localhost:4000"
-}))
-
+     credentials: true,
+     origin: "http://localhost:3000"
+   }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

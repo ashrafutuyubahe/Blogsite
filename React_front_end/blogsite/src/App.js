@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from "react";
+import axios from 'axios';
+
+
 
 function App() {
   const [blogs, setBlogs] = useState([]);
+  
+axios.defaults.baseURL = "http://127.0.0.1:4000";
+axios.defaults.withCredentials = true;
 
-  useEffect(() => {
-    fetch("localhost:4000/blogs") 
-      .then((response) => response.json())
-      .then((blogs) => {
-        setBlogs(blogs);
-        console.log(blogs);
-      });
-  }, []);
+useEffect(() => {
+  axios
+    .get("http://localhost:4000")
+    .then((response) => {
+      console.log(response.data);
+      setBlogs(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}, []);
+
 
   return (
     <div className="app">
