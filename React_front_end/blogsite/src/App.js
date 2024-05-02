@@ -3,7 +3,7 @@ import "./app.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import NavBar from "./components/navbar";
-import DisplayBlog from "./components/blogdisplay";
+import  Home from "./components/home";
 import Register from "./pages/register";
 
 export default function App() {
@@ -13,7 +13,8 @@ export default function App() {
         <NavBar /> 
         <main>
           <Routes>
-            <Route path="/createblog" element={<DisplayBlog />} />
+          <Route index element={<Home />} />
+            <Route path="/createblog" element={<Register/>} />
             <Route path="/register" element={<Register />} />
           
           </Routes>
