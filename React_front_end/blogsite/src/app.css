@@ -1,19 +1,33 @@
+*{
+
+    margin-top: 0;
+    width: 100vw;
+    margin-left: 0;
+}
+
+
 .app{
     font-size: 1.2rem;
     font-family: sans-serif;
+    margin-bottom: 20rem;
     
     
 }
 
- .navbar{
-    margin-bottom: 2rem;
-}
+ 
 .navbar{
+    background-color:rgb(220, 219, 219);
     padding: 2rem;
     position: fixed;
     display: flex;
-    margin-bottom: 20rem;
+    margin-bottom: 200px;
+  
  
  }
+ .home{
+    margin-top: 20px;
+ }
+ 
+
  
  

@@ -1,14 +1,14 @@
  import React from "react";
- 
 
  export default function Card({blog}){
    
 return(
 
    <div className="blogcard">
-     {blog.map((blog) => (
+     <img src="girl wrting a blog.jpg" alt="image"/>
+     {   blog && blog.map((blog) => (
         <div key={blog._id} className="blog" data-blogid={blog._id}>
-        <img src="./girl wrting a blog.jpg" alt=""/>
+       
           <h3 className="blogtitle">
             <a href={`displayblog?id=${blog._id}`}>{blog.data.blogtitle}</a>
           </h3>
