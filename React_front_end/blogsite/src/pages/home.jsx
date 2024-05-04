@@ -1,10 +1,17 @@
 
 import React, { useEffect, useState } from "react";
 import "./home.css";
- export  default function DisplayBlog() {
+import BlogCard from "../components/blogCard";
 
+
+
+ export  default function DisplayBlog() {
+  
+  
 const [blogs,setBlogs]=useState([])
+
   useEffect(() => {
+  
     fetch("http://localhost:4000/blogs", {
       method: "GET",
       headers: {
@@ -27,19 +34,16 @@ const [blogs,setBlogs]=useState([])
       });
   }, []);
 
+ 
+ 
+
   return (
-    <div className="app">
-      {blogs.map((blog) => (
-        <div key={blog._id} className="blog" data-blogid={blog._id}>
-        <img src="" alt="" />
-          <h3 className="blogtitle">
-            <a href={`displayblog?id=${blog._id}`}>{blog.data.blogtitle}</a>
-          </h3>
-          <h5>{blog.data.blogdescription}</h5>
-          <p>written by: {blog.data.authorname}</p>
-          <p> written on {blog.data.date}</p>
-        </div>
-      ))}
+    <div className="home">
+    <h1>hello</h1>
+    
+   
+     <BlogCard blog={blogs}/>
     </div>
   );
 }
+
