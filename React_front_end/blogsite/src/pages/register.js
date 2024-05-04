@@ -78,7 +78,7 @@ export default function Register() {
             Already have an account.{" "}
             <a id="haveAccount" href="/login">
               Log in
-            </a>
+            </a> 
           </h5>
         </form>
       </div>
