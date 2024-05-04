@@ -9,7 +9,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
 
   function handleSubmit(e) {
-    // e.preventDefault();
+     e.preventDefault();
     fetch("http:localhost:4000/register", {
       headers: {
         "Content-Type": "application/json",
