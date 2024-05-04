@@ -35,7 +35,38 @@
     margin-left: 0.7rem;
     
  }
- 
+
+ .logins{
+    margin-top: 20rem;
+
+ }
+ .content {
+    padding-top: 1px;
+  }
+
+  .login-container{
+    margin-top:7rem;
+    
+  }
+.login-form{
+margin-bottom: 5rem;
+margin-left: 2rem;
+}
+.form-group{
+    font-size: large;
+    font-family: sans-serif;
+}
+.social-login button{
+    margin-right: 1rem;
+}
+.social-login{
+    margin-left:1rem;
+}
+
+
+
+  
+   
  
 
  
