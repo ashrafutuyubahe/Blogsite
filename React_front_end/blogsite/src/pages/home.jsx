@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-
+import "./home.css";
  export  default function DisplayBlog() {
 
 const [blogs,setBlogs]=useState([])
@@ -31,6 +31,7 @@ const [blogs,setBlogs]=useState([])
     <div className="app">
       {blogs.map((blog) => (
         <div key={blog._id} className="blog" data-blogid={blog._id}>
+        <img src="" alt="" />
           <h3 className="blogtitle">
             <a href={`displayblog?id=${blog._id}`}>{blog.data.blogtitle}</a>
           </h3>
