@@ -1,7 +1,6 @@
 *{
 
-    margin-top: 0;
-    width: 100vw;
+    margin-top: 0;    
     margin-left: 0;
 }
 
@@ -16,17 +15,27 @@
 
  
 .navbar{
-    background-color:rgb(220, 219, 219);
+    width: 100vw;
+    background-color:rgb(16, 15, 15);
     padding: 2rem;
     position: fixed;
     display: flex;
     margin-bottom: 200px;
+    gap: 20px;
   
  
  }
- .home{
+    .blogcard{
     margin-top: 20px;
+    margin-top: 6rem;
+     display: flex;
+    align-items: start;
+    padding-right: 0;
+    gap: 3rem;
+    margin-left: 0.7rem;
+    
  }
+ 
  
 
  

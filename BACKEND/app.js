@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const ejs = require("ejs");
 const dbconn = require("./DBconfig/Dbconnection");
 const usermodel = require("./models/userschema");
+const ImageModel= require("./models/imageschema");
 const bodyParser = require("body-parser");
 const Joi = require("joi");
 const models = require("./models/blogschema");
@@ -215,13 +216,21 @@ app.get("/blogs", async (req, res) => {
 
       .select("authorname blogtitle blogdescription date")
       .exec();
+      const images= await ImageModel.find({}).exec();
+      
 
-    const blogsWithId = fetchBlogs.map((blog) => ({
+
+    const blogs = fetchBlogs.map((blog) => ({
       _id: new ObjectId(blog._id),
       data: blog,
-    }));
 
-    return res.send(blogsWithId);
+    }));
+    const combined={
+     blogs,
+     images
+    }
+
+    return res.send(combined);
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: "Failed to load data" });
