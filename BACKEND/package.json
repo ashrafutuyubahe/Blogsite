@@ -27,7 +27,7 @@
     "ejs": "^3.1.9",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
-    "express-session": "^1.18.0",
+    "express-session": "^1.18.2",
     "joi": "^17.12.2",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
